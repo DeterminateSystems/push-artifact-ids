@@ -23,6 +23,9 @@ runs:
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo "$GITHUB_CONTEXT"
+    - name: pwdls
+      shell: bash
+      run: pwd; ls
 
     - name: install.determinate.systems push determination
       id: determination
@@ -95,4 +98,6 @@ runs:
         NAME: ${{ steps.determination.outputs.name }}
       shell: bash
       run: |
+        pwd
+        ls
         $GITHUB_ACTION_PATH/upload_s3.sh "$ARTIFACTS_DIRECTORY" "$RELEASE_TYPE" "$GITHUB_REF_NAME" "$GITHUB_SHA"
