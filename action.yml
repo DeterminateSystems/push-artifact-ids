@@ -11,73 +11,88 @@ inputs:
     description: 'S3 bucket to write to.'
   directory:
     description: 'directory to upload artifacts from'
+  allowed_branches:
+    description: a JSON list of branches for which to publish pushes
+    default: '["main"]'
 runs:
   using: 'composite'
   steps:
+    - name: dump context
+      if: true
+      shell: bash
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
+
     - name: install.determinate.systems push determination
       id: determination
-      run:
-
+      shell: bash
+      run: |
         push_style=${{
           ((
-            github.event_name == "pull_request"
-            && github.head_ref != ""
-            && github.base_ref != ""
-            && github.event.pull_request.head.repo.owner.name == "DeterminateSystems"
-            && github.repository_owner == "DeterminateSystems"
+            github.event_name == 'pull_request'
+            && github.head_ref != ''
+            && github.base_ref != ''
+            && github.event.pull_request.head.repo.owner.login == 'DeterminateSystems'
+            && github.repository_owner == 'DeterminateSystems'
             && contains(github.event.pull_request.labels.*.name, 'upload to s3')
-          ) && "pr")
+          ) && 'pr')
           ||
           ((
             (
-              github.event_name == "push"
-              || github.event_name == "workflow_dispatch"
+              github.event_name == 'push'
+              || github.event_name == 'workflow_dispatch'
             )
-            && github.head_ref == ""
-            && github.base_ref == ""
-            && github.event.repository.owner.name == "DeterminateSystems"
-            && github.repository_owner == "DeterminateSystems"
-            && ref_type == "tag"
-          ) && "tag")
+            && github.head_ref == ''
+            && github.base_ref == ''
+            && github.event.repository.owner.name == 'DeterminateSystems'
+            && github.repository_owner == 'DeterminateSystems'
+            && github.ref_type == 'tag'
+          ) && 'tag')
           ||
           ((
             (
-              github.event_name == "push"
-              || github.event_name == "workflow_dispatch"
+              github.event_name == 'push'
+              || github.event_name == 'workflow_dispatch'
             )
-            && github.head_ref == ""
-            && github.base_ref == ""
-            && github.event.repository.owner.name == "DeterminateSystems"
-            && github.repository_owner == "DeterminateSystems"
-            && ref_type == "branch"
-          ) && "branch")
+            && github.head_ref == ''
+            && github.base_ref == ''
+            && github.event.repository.owner.name == 'DeterminateSystems'
+            && github.repository_owner == 'DeterminateSystems'
+            && github.ref_type == 'branch'
+            && contains(fromJSON(inputs.allowed_branches), github.ref_name)
+          ) && 'branch')
           ||
-          "none"
+          'none'
         }}
 
-        if [ "$push_style" == "pr" ]; then
-          echo "push_style=pr" >> $GITHUB_OUTPUT
-          echo "sha=${github.event.pull_request.head.sha}" >> $GITHUB_OUTPUT
-          echo "name=${github.event.pull_request.number}" >> $GITHUB_OUTPUT
-        elif [ "$push_style" == "branch" ] || [ "$push_style" == "tag" ]; then
-          echo "push_style=$push_style" >> $GITHUB_OUTPUT
-          echo "sha=${github.sha}" >> $GITHUB_OUTPUT
-          echo "name=${github.ref_name}" >> $GITHUB_OUTPUT
+        set -x
+        if [ "$push_style" == 'pr' ]; then
+          echo 'push_style=pr' >> $GITHUB_OUTPUT;
+          echo 'sha=${{github.event.pull_request.head.sha}}' >> $GITHUB_OUTPUT;
+          echo 'name=${{github.event.pull_request.number}}' >> $GITHUB_OUTPUT;
+        elif [ "$push_style" == 'branch' ] || [ "$push_style" == 'tag' ]; then
+          echo "push_style=$push_style" >> $GITHUB_OUTPUT;
+          echo 'sha=${{github.sha}}' >> $GITHUB_OUTPUT;
+          echo 'name=${{github.ref_name}}' >> $GITHUB_OUTPUT;
+        else
+          echo 'push_style=none' >> $GITHUB_OUTPUT;
         fi
     - name: Configure AWS Credentials
-      if: ${{ steps.determination.outputs.push_style != "none" }}
+      if: ${{ steps.determination.outputs.push_style != 'none' }}
       uses: aws-actions/configure-aws-credentials@v2
       with:
         role-to-assume: ${{ inputs.s3_upload_role }}
         aws-region: ${{ inputs.region }}
 
     - name: Publish Release to S3 (${{ inputs.release_type }})
-      if: {{ steps.determination.outputs.push_style != "none"  }}
+      if: ${{ steps.determination.outputs.push_style != 'none'  }}
       env:
         AWS_BUCKET: ${{ inputs.bucket }}
         RELEASE_TYPE: ${{ steps.determination.outputs.push_style }}
         ARTIFACTS_DIRECTORY: ${{ inputs.directory }}
         SHA: ${{ steps.determination.outputs.sha }}
         NAME: ${{ steps.determination.outputs.name }}
+      shell: bash
       run: |
         echo $GITHUB_ACTION_PATH/upload_s3.sh "$ARTIFACTS_DIRECTORY" "$RELEASE_TYPE" "$GITHUB_REF_NAME" "$GITHUB_SHA"
