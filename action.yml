@@ -96,12 +96,3 @@ runs:
       shell: bash
       run: |
         $GITHUB_ACTION_PATH/upload_s3.sh "$ARTIFACTS_DIRECTORY" "$RELEASE_TYPE" "$GITHUB_REF_NAME" "$GITHUB_SHA"
-
-      - name: Publish Release to GitHub (Tag)
-        if: ${{ steps.determination.outputs.push_style == 'tag' }}
-        uses: softprops/action-gh-release@v1
-        with:
-          fail_on_unmatched_files: true
-          draft: true
-          files: |
-            ${{ inputs.directory }}/**
