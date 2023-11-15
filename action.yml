@@ -75,7 +75,7 @@ runs:
         aws-region: ${{ inputs.region }}
 
     - name: Publish Release to S3 (${{ inputs.release_type }})
-      if: {{ steps.determination.outputs.push_style != 'none'  }}
+      if: ${{ steps.determination.outputs.push_style != 'none'  }}
       env:
         AWS_BUCKET: ${{ inputs.bucket }}
         RELEASE_TYPE: ${{ steps.determination.outputs.push_style }}
