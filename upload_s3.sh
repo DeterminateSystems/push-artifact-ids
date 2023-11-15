@@ -46,7 +46,7 @@ check_reupload() {
   find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
   while IFS= read -r -d '' artifact; do
     artifact_path="$dest"/"$(basename "$artifact")"
-    md5="$(md5sum "$artifact" | cut -d' ' -f1)"
+    md5="$(openssl dgst -md5 "$artifact" | cut -d' ' -f2)"
     obj="$(aws s3api head-object --bucket "$AWS_BUCKET" --key "$artifact_path" || echo '{}')"
     obj_md5="$(jq -r .ETag <<<"$obj" | jq -r)" # head-object call returns ETag quoted, so `jq -r` again to unquote it
 
