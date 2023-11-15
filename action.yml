@@ -11,6 +11,9 @@ inputs:
     description: 'S3 bucket to write to.'
   directory:
     description: 'directory to upload artifacts from'
+  allowed_branches:
+    description: a JSON list of branches for which to publish pushes
+    default: main
 runs:
   using: 'composite'
   steps:
@@ -57,6 +60,7 @@ runs:
             && github.event.repository.owner.name == 'DeterminateSystems'
             && github.repository_owner == 'DeterminateSystems'
             && github.ref_type == 'branch'
+            && contains(fromJSON(inputs.allowed_branches), github.ref_name)
           ) && 'branch')
           ||
           'none'
