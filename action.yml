@@ -14,6 +14,8 @@ inputs:
   allowed_branches:
     description: a JSON list of branches for which to publish pushes
     default: '["main"]'
+  ids_project_name:
+    description: the project name in install.determinate.systems, for URL generation
 runs:
   using: 'composite'
   steps:
@@ -88,6 +90,7 @@ runs:
     - name: Publish Release to S3 (${{ inputs.release_type }})
       if: ${{ steps.determination.outputs.push_style != 'none'  }}
       env:
+        IDS_PROJECT: ${{ inputs.ids_project_name }}
         AWS_BUCKET: ${{ inputs.bucket }}
         RELEASE_TYPE: ${{ steps.determination.outputs.push_style }}
         ARTIFACTS_DIRECTORY: ${{ inputs.directory }}
