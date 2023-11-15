@@ -56,6 +56,7 @@ runs:
           'none'
         }}
 
+        set +x
         if [ "$push_style" == 'pr' ]; then
           echo 'push_style=pr' >> $GITHUB_OUTPUT;
           echo 'sha=${github.event.pull_request.head.sha}' >> $GITHUB_OUTPUT;
