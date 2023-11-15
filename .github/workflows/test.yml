@@ -19,5 +19,6 @@ jobs:
           s3_upload_role: ooga
           bucket: booga
           directory: ./artifacts
+          allowed_branches: '["main", "test"]'
 
       
