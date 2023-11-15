@@ -17,8 +17,7 @@ runs:
     - name: install.determinate.systems push determination
       id: determination
       shell: bash
-      run:
-
+      run: |
         push_style=${{
           ((
             github.event_name == 'pull_request'
