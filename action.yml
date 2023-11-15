@@ -13,7 +13,7 @@ inputs:
     description: 'directory to upload artifacts from'
   allowed_branches:
     description: a JSON list of branches for which to publish pushes
-    default: main
+    default: '["main"]'
 runs:
   using: 'composite'
   steps:
