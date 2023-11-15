@@ -80,7 +80,7 @@ runs:
         fi
     - name: Configure AWS Credentials
       if: ${{ steps.determination.outputs.push_style != 'none' }}
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: ${{ inputs.s3_upload_role }}
         aws-region: ${{ inputs.region }}
