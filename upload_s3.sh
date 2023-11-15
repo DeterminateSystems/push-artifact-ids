@@ -32,7 +32,8 @@ fi
 mkdir "$DEST"
 mkdir "$GIT_ISH"
 
-for artifact in $(find "$ARTIFACTS_DIRECTORY/" -type f); do
+find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
+    while IFS= read -r -d '' artifact; do
   chmod +x "$artifact"
   cp "$artifact" "$DEST"/
   cp "$artifact" "$GIT_ISH"/
@@ -72,7 +73,8 @@ This commit's ${IDS_PROJECT} artifacts can be fetched via:
 
 EOF
 
-for artifact in $(find "$ARTIFACTS_DIRECTORY/" -type f); do
+find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
+    while IFS= read -r -d '' artifact; do
     cat <<-EOF >> $GITHUB_STEP_SUMMARY
 \`\`\`
 curl --output fh --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/${IDS_PROJECT}/rev/$GIT_ISH/${artifact}
@@ -86,7 +88,8 @@ Or generally from this ${TYPE}:
 
 EOF
 
-for artifact in $(find "$ARTIFACTS_DIRECTORY/" -type f); do
+find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
+    while IFS= read -r -d '' artifact; do
     cat <<-EOF >> $GITHUB_STEP_SUMMARY
 \`\`\`
 curl --output fh --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/${IDS_PROJECT}/${TYPE}/${TYPE_ID}/${artifact}
