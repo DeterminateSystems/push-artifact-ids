@@ -43,7 +43,8 @@ done
 check_reupload() {
   dest="$1"
 
-  for file in $(find "$dest" -type f); do
+  find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
+  while IFS= read -r -d '' artifact; do
     artifact_path="$dest"/"$(basename "$artifact")"
     md5="$(md5sum "$artifact" | cut -d' ' -f1)"
     obj="$(aws s3api head-object --bucket "$AWS_BUCKET" --key "$artifact_path" || echo '{}')"
