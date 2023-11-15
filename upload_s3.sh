@@ -1,5 +1,5 @@
 #!/bin/sh
-set -eu
+set -eux
 
 ARTIFACTS_DIRECTORY="$1"
 TYPE="$2"
