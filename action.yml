@@ -16,7 +16,7 @@ runs:
   steps:
     - name: dump context
       if: true
-      shell: b ash
+      shell: bash
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo "$GITHUB_CONTEXT"
