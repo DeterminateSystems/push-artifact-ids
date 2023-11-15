@@ -14,6 +14,13 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: dump context
+      if: true
+      shell: b ash
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
+
     - name: install.determinate.systems push determination
       id: determination
       shell: bash
