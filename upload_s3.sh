@@ -76,6 +76,7 @@ EOF
 
 find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
     while IFS= read -r -d '' artifact; do
+    artifact=$(basename "$artifact");
     cat <<-EOF >> $GITHUB_STEP_SUMMARY
 \`\`\`
 curl --output fh --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/${IDS_PROJECT}/rev/$GIT_ISH/${artifact}
@@ -91,6 +92,7 @@ EOF
 
 find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
     while IFS= read -r -d '' artifact; do
+    artifact=$(basename "$artifact");
     cat <<-EOF >> $GITHUB_STEP_SUMMARY
 \`\`\`
 curl --output fh --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/${IDS_PROJECT}/${TYPE}/${TYPE_ID}/${artifact}
