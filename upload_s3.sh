@@ -79,8 +79,9 @@ find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
     artifact=$(basename "$artifact");
     cat <<-EOF >> $GITHUB_STEP_SUMMARY
 \`\`\`
-curl --output fh --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/${IDS_PROJECT}/rev/$GIT_ISH/${artifact}
+curl --output fh --proto '=https' --tlsv1.2 -sSf -L 'https://install.determinate.systems/${IDS_PROJECT}/rev/$GIT_ISH/${artifact}'
 \`\`\`
+
 EOF
 done
 
@@ -95,7 +96,7 @@ find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
     artifact=$(basename "$artifact");
     cat <<-EOF >> $GITHUB_STEP_SUMMARY
 \`\`\`
-curl --output fh --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/${IDS_PROJECT}/${TYPE}/${TYPE_ID}/${artifact}
+curl --output fh --proto '=https' --tlsv1.2 -sSf -L 'https://install.determinate.systems/${IDS_PROJECT}/${TYPE}/${TYPE_ID}/${artifact}'
 \`\`\`
 
 EOF
