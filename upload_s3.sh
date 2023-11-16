@@ -33,10 +33,10 @@ mkdir "$DEST"
 mkdir "$GIT_ISH"
 
 find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
-    while IFS= read -r -d '' artifact; do
-  chmod +x "$artifact"
-  cp "$artifact" "$DEST"/
-  cp "$artifact" "$GIT_ISH"/
+    while IFS= read -r -d '' architecture; do
+  chmod +x "$architecture"
+  cp "$architecture" "$DEST/${IDS_BINARY_PREFIX}-${architecture}"
+  cp "$architecture" "$GIT_ISH/${IDS_BINARY_PREFIX}-${architecture}"
 done
 
 # If any artifact already exists in S3 and the hash is the same, we don't want to reupload
@@ -75,11 +75,11 @@ This commit's ${IDS_PROJECT} artifacts can be fetched via:
 EOF
 
 find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
-    while IFS= read -r -d '' artifact; do
-    artifact=$(basename "$artifact");
+    while IFS= read -r -d '' architecture; do
+    architecture=$(basename "$architecture");
     cat <<-EOF >> $GITHUB_STEP_SUMMARY
 \`\`\`
-curl --remote-name --proto '=https' --tlsv1.2 -sSf -L 'https://install.determinate.systems/${IDS_PROJECT}/rev/$GIT_ISH/${artifact}'
+curl --output "$IDS_BINARY_PREFIX" --proto '=https' --tlsv1.2 -sSf -L 'https://install.determinate.systems/${IDS_PROJECT}/rev/$GIT_ISH/${architecture}'
 \`\`\`
 
 EOF
@@ -92,11 +92,11 @@ Or generally from this ${TYPE}:
 EOF
 
 find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
-    while IFS= read -r -d '' artifact; do
-    artifact=$(basename "$artifact");
+    while IFS= read -r -d '' architecture; do
+    architecture=$(basename "$architecture");
     cat <<-EOF >> $GITHUB_STEP_SUMMARY
 \`\`\`
-curl --remote-name --proto '=https' --tlsv1.2 -sSf -L 'https://install.determinate.systems/${IDS_PROJECT}/${TYPE}/${TYPE_ID}/${artifact}'
+curl --output "$IDS_BINARY_PREFIX" --proto '=https' --tlsv1.2 -sSf -L 'https://install.determinate.systems/${IDS_PROJECT}/${TYPE}/${TYPE_ID}/${architecture}'
 \`\`\`
 
 EOF

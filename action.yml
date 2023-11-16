@@ -16,6 +16,8 @@ inputs:
     default: '["main"]'
   ids_project_name:
     description: the project name in install.determinate.systems, for URL generation
+  ids_binary_prefix:
+    description: a prefix in storage that comprises {binary_prefix}-${architecture} in storage
 runs:
   using: 'composite'
   steps:
@@ -91,6 +93,7 @@ runs:
       if: ${{ steps.determination.outputs.push_style != 'none'  }}
       env:
         IDS_PROJECT: ${{ inputs.ids_project_name }}
+        IDS_BINARY_PREFIX:  ${{ inputs.ids_binary_prefix }}
         AWS_BUCKET: ${{ inputs.bucket }}
         RELEASE_TYPE: ${{ steps.determination.outputs.push_style }}
         ARTIFACTS_DIRECTORY: ${{ inputs.directory }}
