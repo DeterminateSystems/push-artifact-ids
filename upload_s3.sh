@@ -35,8 +35,9 @@ mkdir "$GIT_ISH"
 find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
     while IFS= read -r -d '' architecture; do
   chmod +x "$architecture"
-  cp "$architecture" "$DEST/${IDS_BINARY_PREFIX}-${architecture}"
-  cp "$architecture" "$GIT_ISH/${IDS_BINARY_PREFIX}-${architecture}"
+  architecture_only=$(basename "$architecture");
+  cp "$architecture" "$DEST/${IDS_BINARY_PREFIX}-${architecture_only}"
+  cp "$architecture" "$GIT_ISH/${IDS_BINARY_PREFIX}-${architecture_only}"
 done
 
 # If any artifact already exists in S3 and the hash is the same, we don't want to reupload
