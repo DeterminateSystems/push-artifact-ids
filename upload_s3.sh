@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -eux
 
 ARTIFACTS_DIRECTORY="$1"
@@ -64,11 +64,14 @@ if ! is_tag; then
   check_reupload "$GIT_ISH"
 fi
 
-aws s3 sync "$DEST"/ s3://"$AWS_BUCKET"/"$DEST"/ --acl public-read
-if ! is_tag; then
-  aws s3 sync "$GIT_ISH"/ s3://"$AWS_BUCKET"/"$GIT_ISH"/ --acl public-read
-fi
+sync_args=()
+sync_args+=(--acl public-read)
+sync_args+=(--content-disposition "attachment; filename=\"$IDS_BINARY_PREFIX\"")
 
+aws s3 sync "$DEST"/ s3://"$AWS_BUCKET"/"$DEST"/ "${sync_args[@]}"
+if ! is_tag; then
+  aws s3 sync "$GIT_ISH"/ s3://"$AWS_BUCKET"/"$GIT_ISH"/ "${sync_args[@]}"
+fi
 
 cat <<-EOF >> $GITHUB_STEP_SUMMARY
 This commit's ${IDS_PROJECT} artifacts can be fetched via:
