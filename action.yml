@@ -50,7 +50,10 @@ runs:
             )
             && github.head_ref == ''
             && github.base_ref == ''
-            && github.event.repository.owner.name == 'DeterminateSystems'
+            && (
+              github.event.repository.owner.name == 'DeterminateSystems'
+              || github.event.repository.owner.login == 'DeterminateSystems'
+            )
             && github.repository_owner == 'DeterminateSystems'
             && github.ref_type == 'tag'
           ) && 'tag')
@@ -62,7 +65,10 @@ runs:
             )
             && github.head_ref == ''
             && github.base_ref == ''
-            && github.event.repository.owner.name == 'DeterminateSystems'
+            && (
+              github.event.repository.owner.name == 'DeterminateSystems'
+              || github.event.repository.owner.login == 'DeterminateSystems'
+            )
             && github.repository_owner == 'DeterminateSystems'
             && github.ref_type == 'branch'
             && contains(fromJSON(inputs.allowed_branches), github.ref_name)
