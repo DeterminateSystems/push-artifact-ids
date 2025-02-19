@@ -46,10 +46,10 @@ runs:
             (
               github.event_name == 'push'
               || github.event_name == 'workflow_dispatch'
+              || github.event_name == 'release'
             )
             && github.head_ref == ''
             && github.base_ref == ''
-            && github.event.repository.owner.name == 'DeterminateSystems'
             && github.repository_owner == 'DeterminateSystems'
             && github.ref_type == 'tag'
           ) && 'tag')
