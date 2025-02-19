@@ -50,6 +50,7 @@ runs:
             )
             && github.head_ref == ''
             && github.base_ref == ''
+            && github.event.repository.owner.name == 'DeterminateSystems'
             && github.repository_owner == 'DeterminateSystems'
             && github.ref_type == 'tag'
           ) && 'tag')
