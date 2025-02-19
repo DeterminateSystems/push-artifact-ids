@@ -37,10 +37,7 @@ runs:
             github.event_name == 'pull_request'
             && github.head_ref != ''
             && github.base_ref != ''
-            && (
-              github.event.repository.owner.name == 'DeterminateSystems'
-              || github.event.repository.owner.login == 'DeterminateSystems'
-            )
+            && github.event.pull_request.head.repo.owner.login == 'DeterminateSystems'
             && github.repository_owner == 'DeterminateSystems'
             && contains(github.event.pull_request.labels.*.name, 'upload to s3')
           ) && 'pr')
