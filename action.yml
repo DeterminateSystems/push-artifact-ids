@@ -18,9 +18,6 @@ inputs:
     description: the project name in install.determinate.systems, for URL generation
   ids_binary_prefix:
     description: a prefix in storage that comprises {binary_prefix}-${architecture} in storage
-  upload_artifacts_as_is:
-    description: don't concatenate existing artifacts with their binary prefix and architecture
-    default: false
   skip_acl:
     description: skip setting public-read ACL on artifacts (i.e. bucket doesn't allow it)
     default: false
@@ -113,7 +110,6 @@ runs:
         ARTIFACTS_DIRECTORY: ${{ inputs.directory }}
         SHA: ${{ steps.determination.outputs.sha }}
         NAME: ${{ steps.determination.outputs.name }}
-        UPLOAD_ARTIFACTS_AS_IS: ${{ inputs.upload_artifacts_as_is }}
         SKIP_ACL: ${{ inputs.skip_acl }}
       shell: bash
       run: |
