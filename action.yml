@@ -18,6 +18,10 @@ inputs:
     description: the project name in install.determinate.systems, for URL generation
   ids_binary_prefix:
     description: a prefix in storage that comprises {binary_prefix}-${architecture} in storage
+  skip_acl:
+    description: skip setting public-read ACL on artifacts (i.e. bucket doesn't allow it)
+    default: false
+
 runs:
   using: 'composite'
   steps:
@@ -106,6 +110,7 @@ runs:
         ARTIFACTS_DIRECTORY: ${{ inputs.directory }}
         SHA: ${{ steps.determination.outputs.sha }}
         NAME: ${{ steps.determination.outputs.name }}
+        SKIP_ACL: ${{ inputs.skip_acl }}
       shell: bash
       run: |
         $GITHUB_ACTION_PATH/upload_s3.sh "$ARTIFACTS_DIRECTORY" "$RELEASE_TYPE" "$NAME" "$SHA"

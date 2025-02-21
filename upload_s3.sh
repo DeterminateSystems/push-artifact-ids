@@ -65,7 +65,11 @@ if ! is_tag; then
 fi
 
 sync_args=()
-sync_args+=(--acl public-read)
+
+if [[ "$SKIP_ACL" != "true" ]]; then
+  sync_args+=(--acl public-read)
+fi
+
 sync_args+=(--content-disposition "attachment; filename=\"$IDS_BINARY_PREFIX\"")
 
 aws s3 sync "$DEST"/ s3://"$AWS_BUCKET"/"$DEST"/ "${sync_args[@]}"
