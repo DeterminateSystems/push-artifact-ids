@@ -32,13 +32,22 @@ fi
 mkdir "$DEST"
 mkdir "$GIT_ISH"
 
-find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
-    while IFS= read -r -d '' architecture; do
-  chmod +x "$architecture"
-  architecture_only=$(basename "$architecture");
-  cp "$architecture" "$DEST/${IDS_BINARY_PREFIX}-${architecture_only}"
-  cp "$architecture" "$GIT_ISH/${IDS_BINARY_PREFIX}-${architecture_only}"
-done
+if [[ "$UPLOAD_ARTIFACTS_AS_IS" = "true" ]]; then
+  find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
+      while IFS= read -r -d '' file; do
+    chmod +x "$file"
+    cp "$file" "$DEST"
+    cp "$file" "$GIT_ISH"
+  done
+else
+  find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
+      while IFS= read -r -d '' architecture; do
+    chmod +x "$architecture"
+    architecture_only=$(basename "$architecture");
+    cp "$architecture" "$DEST/${IDS_BINARY_PREFIX}-${architecture_only}"
+    cp "$architecture" "$GIT_ISH/${IDS_BINARY_PREFIX}-${architecture_only}"
+  done
+fi
 
 # If any artifact already exists in S3 and the hash is the same, we don't want to reupload
 check_reupload() {
@@ -65,7 +74,11 @@ if ! is_tag; then
 fi
 
 sync_args=()
-sync_args+=(--acl public-read)
+
+if [[ "$SKIP_ACL" != "true" ]]; then
+  sync_args+=(--acl public-read)
+fi
+
 sync_args+=(--content-disposition "attachment; filename=\"$IDS_BINARY_PREFIX\"")
 
 aws s3 sync "$DEST"/ s3://"$AWS_BUCKET"/"$DEST"/ "${sync_args[@]}"
