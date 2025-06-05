@@ -51,7 +51,7 @@ check_reupload() {
     obj="$(aws s3api head-object --bucket "$AWS_BUCKET" --key "$artifact_path" || echo '{}')"
     obj_md5="$(jq -r .ETag <<<"$obj" | jq -r)" # head-object call returns ETag quoted, so `jq -r` again to unquote it
 
-    if [[ "$md5" == "$obj_md5" ]]; then
+    if [[ "$md5" != "$obj_md5" ]]; then
       echo "Artifact $artifact was already uploaded; exiting"
       # If we already uploaded to a tag, that's probably bad
       is_tag && exit 1 || exit 0
