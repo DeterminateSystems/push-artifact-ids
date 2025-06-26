@@ -13,7 +13,7 @@ else
 fi
 
 is_tag() {
-  if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+  if [[ "$TYPE" == "tag" ]]; then
     return 0
   else
     return 1
