@@ -13,7 +13,7 @@ else
 fi
 
 is_tag() {
-  if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+  if [[ "$TYPE" == "tag" ]]; then
     return 0
   else
     return 1
@@ -75,12 +75,25 @@ if [[ "$SKIP_ACL" != "true" ]]; then
   sync_args+=(--acl public-read)
 fi
 
+# NOTE(cole-h): never allow reuploading to a tag
+if is_tag; then
+  sync_args+=(--if-none-match '*')
+fi
+
 sync_args+=(--content-disposition "attachment; filename=\"$IDS_BINARY_PREFIX\"")
 
-aws s3 sync "$DEST"/ s3://"$AWS_BUCKET"/"$DEST"/ "${sync_args[@]}"
+# NOTE(cole-h): never allow reuploading to a rev
 if ! is_tag; then
-  aws s3 sync "$GIT_ISH"/ s3://"$AWS_BUCKET"/"$GIT_ISH"/ "${sync_args[@]}"
+  find "$GIT_ISH/" -type f -print0 |
+    while IFS= read -r -d '' artifact; do
+      aws s3api put-object --bucket "$AWS_BUCKET" --key "$artifact" --body "$artifact" "${sync_args[@]}" --if-none-match '*'
+    done
 fi
+
+find "$DEST/" -type f -print0 |
+  while IFS= read -r -d '' artifact; do
+    aws s3api put-object --bucket "$AWS_BUCKET" --key "$artifact" --body "$artifact" "${sync_args[@]}"
+  done
 
 cat <<-EOF >> $GITHUB_STEP_SUMMARY
 This commit's ${IDS_PROJECT} artifacts can be fetched via:
