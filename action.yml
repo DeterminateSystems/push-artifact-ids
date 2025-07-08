@@ -21,8 +21,6 @@ inputs:
   skip_acl:
     description: skip setting public-read ACL on artifacts (i.e. bucket doesn't allow it)
     default: false
-  _internal_override_sha:
-    description: "INTERNAL: override the sha (e.g. to test that overwriting the artifacts for the given SHA fails)"
 
 runs:
   using: 'composite'
@@ -110,7 +108,7 @@ runs:
         AWS_BUCKET: ${{ inputs.bucket }}
         RELEASE_TYPE: ${{ steps.determination.outputs.push_style }}
         ARTIFACTS_DIRECTORY: ${{ inputs.directory }}
-        SHA: ${{ inputs._internal_override_sha || steps.determination.outputs.sha }}
+        SHA: ${{ steps.determination.outputs.sha }}
         NAME: ${{ steps.determination.outputs.name }}
         SKIP_ACL: ${{ inputs.skip_acl }}
       shell: bash
