@@ -47,6 +47,8 @@ check_reupload() {
   find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
   while IFS= read -r -d '' artifact; do
     artifact_path="$dest"/"$(basename "$artifact")"
+    artifact_path="$(echo "$artifact_path" | tr -s /)"
+
     md5="$(openssl dgst -md5 "$artifact" | cut -d' ' -f2)"
     obj="$(aws s3api head-object --bucket "$AWS_BUCKET" --key "$artifact_path" || echo '{}')"
     obj_md5="$(jq -r .ETag <<<"$obj" | jq -r)" # head-object call returns ETag quoted, so `jq -r` again to unquote it
@@ -85,14 +87,16 @@ sync_args+=(--content-disposition "attachment; filename=\"$IDS_BINARY_PREFIX\"")
 # NOTE(cole-h): never allow reuploading to a rev
 if ! is_tag; then
   find "$GIT_ISH/" -type f -print0 |
-    while IFS= read -r -d '' artifact; do
-      aws s3api put-object --bucket "$AWS_BUCKET" --key "$artifact" --body "$artifact" "${sync_args[@]}" --if-none-match '*'
+    while IFS= read -r -d '' artifact_path; do
+      artifact_path="$(echo "$artifact_path" | tr -s /)"
+      aws s3api put-object --bucket "$AWS_BUCKET" --key "$artifact_path" --body "$artifact" "${sync_args[@]}" --if-none-match '*'
     done
 fi
 
 find "$DEST/" -type f -print0 |
-  while IFS= read -r -d '' artifact; do
-    aws s3api put-object --bucket "$AWS_BUCKET" --key "$artifact" --body "$artifact" "${sync_args[@]}"
+  while IFS= read -r -d '' artifact_path; do
+    artifact_path="$(echo "$artifact_path" | tr -s /)"
+    aws s3api put-object --bucket "$AWS_BUCKET" --key "$artifact_path" --body "$artifact" "${sync_args[@]}"
   done
 
 cat <<-EOF >> $GITHUB_STEP_SUMMARY
