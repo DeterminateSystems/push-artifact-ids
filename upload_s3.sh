@@ -89,14 +89,14 @@ if ! is_tag; then
   find "$GIT_ISH/" -type f -print0 |
     while IFS= read -r -d '' artifact_path; do
       artifact_path="$(echo "$artifact_path" | tr -s /)"
-      aws s3api put-object --bucket "$AWS_BUCKET" --key "$artifact_path" --body "$artifact" "${sync_args[@]}" --if-none-match '*'
+      aws s3api put-object --bucket "$AWS_BUCKET" --key "$artifact_path" --body "$artifact_path" "${sync_args[@]}" --if-none-match '*'
     done
 fi
 
 find "$DEST/" -type f -print0 |
   while IFS= read -r -d '' artifact_path; do
     artifact_path="$(echo "$artifact_path" | tr -s /)"
-    aws s3api put-object --bucket "$AWS_BUCKET" --key "$artifact_path" --body "$artifact" "${sync_args[@]}"
+    aws s3api put-object --bucket "$AWS_BUCKET" --key "$artifact_path" --body "$artifact_path" "${sync_args[@]}"
   done
 
 cat <<-EOF >> $GITHUB_STEP_SUMMARY
