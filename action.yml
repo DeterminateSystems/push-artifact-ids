@@ -9,6 +9,11 @@ inputs:
     default: us-east-2
   bucket:
     description: 'S3 bucket to write to.'
+  prefix:
+    description: |
+      A directory prefix, where files in the specified `directory` end up at `/{prefix}/{filename}`.
+      Used only by Determinate Secure Packages, which specifies the release as the prefix.
+      This enables paths like `https://install.determinate.systems/secure-packages/0.904649.292/closure.json`.
   directory:
     description: 'directory to upload artifacts from'
   allowed_branches:
@@ -107,6 +112,7 @@ runs:
         IDS_BINARY_PREFIX:  ${{ inputs.ids_binary_prefix }}
         AWS_BUCKET: ${{ inputs.bucket }}
         RELEASE_TYPE: ${{ steps.determination.outputs.push_style }}
+        FLAT_MODE: ${{ inputs.flat_mode }}
         ARTIFACTS_DIRECTORY: ${{ inputs.directory }}
         SHA: ${{ steps.determination.outputs.sha }}
         NAME: ${{ steps.determination.outputs.name }}
