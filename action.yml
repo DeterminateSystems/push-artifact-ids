@@ -112,7 +112,7 @@ runs:
         IDS_BINARY_PREFIX:  ${{ inputs.ids_binary_prefix }}
         AWS_BUCKET: ${{ inputs.bucket }}
         RELEASE_TYPE: ${{ steps.determination.outputs.push_style }}
-        FLAT_MODE: ${{ inputs.flat_mode }}
+        PREFIX: ${{ inputs.prefix }}
         ARTIFACTS_DIRECTORY: ${{ inputs.directory }}
         SHA: ${{ steps.determination.outputs.sha }}
         NAME: ${{ steps.determination.outputs.name }}
