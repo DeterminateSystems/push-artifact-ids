@@ -12,8 +12,8 @@ inputs:
   prefix:
     description: |
       A directory prefix, where files in the specified `directory` end up at `/{prefix}/{filename}`.
-      Used only by Determinate Secure Packages, which specifies the release as the prefix.
-      This enables paths like `https://install.determinate.systems/secure-packages/0.904649.292/closure.json`.
+      Used only by Determinate Secure Packages, which specifies the variant (`secure` or `secure-fips`) and the release (e.g. `0.904649.292`) as the prefix.
+      This enables paths like `https://install.determinate.systems/secure-packages/secure-fips/0.904649.292/closure.json`.
   directory:
     description: 'directory to upload artifacts from'
   allowed_branches:
