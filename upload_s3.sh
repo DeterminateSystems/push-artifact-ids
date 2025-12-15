@@ -2,6 +2,39 @@
 set -eux
 
 ARTIFACTS_DIRECTORY="$1"
+
+# Prefix mode: upload artifacts with a `prefix` and don't use the tag/branch/etc logic
+if [[ -n "${PREFIX:-}" ]]; then 
+  base_s3_path="${IDS_PROJECT}/${PREFIX}"
+
+  sync_args=()
+  if [[ "${SKIP_ACL:-false}" != "true" ]]; then
+    sync_args+=(--acl public-read)
+  fi
+
+  find "$ARTIFACTS_DIRECTORY" -type f -print0 |
+    while IFS= read -r -d '' file; do
+      relative_path="${file#$ARTIFACTS_DIRECTORY/}"
+      s3_key="${base_s3_path}/${relative_path}"
+      
+      aws s3api put-object \
+        --bucket "$AWS_BUCKET" \
+        --key "$s3_key" \
+        --body "$file" \
+        "${sync_args[@]}"
+      
+      cat <<-EOF >> "$GITHUB_STEP_SUMMARY"
+\`\`\`
+curl --proto '=https' --tlsv1.2 -sSf -L 'https://install.determinate.systems/${s3_key}'
+\`\`\`
+
+EOF
+    done
+
+  exit 0
+fi
+
+# Tag/branch/etc logic
 TYPE="$2"
 TYPE_ID="$3"
 GIT_ISH="$4"
