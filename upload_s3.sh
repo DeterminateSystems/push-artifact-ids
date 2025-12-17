@@ -5,7 +5,7 @@ ARTIFACTS_DIRECTORY="$1"
 
 # Prefix mode: upload artifacts with a `prefix` and don't use the tag/branch/etc logic
 if [[ -n "${PREFIX:-}" ]]; then 
-  base_s3_path="${IDS_PROJECT}/${PREFIX}"
+  base_s3_path="${PREFIX}"
 
   sync_args=()
   if [[ "${SKIP_ACL:-false}" != "true" ]]; then
