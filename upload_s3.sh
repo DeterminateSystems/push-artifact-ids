@@ -25,7 +25,7 @@ if [[ -n "${PREFIX:-}" ]]; then
       
       cat <<-EOF >> "$GITHUB_STEP_SUMMARY"
 \`\`\`
-curl --proto '=https' --tlsv1.2 -sSf -L 'https://install.determinate.systems/${s3_key}'
+curl --proto '=https' --tlsv1.2 -sSf -L 'https://install.determinate.systems/${IDS_PROJECT}/${s3_key}'
 \`\`\`
 
 EOF
