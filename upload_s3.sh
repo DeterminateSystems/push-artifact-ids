@@ -14,7 +14,7 @@ if [[ -n "${PREFIX:-}" ]]; then
 
   find "$ARTIFACTS_DIRECTORY" -type f -print0 |
     while IFS= read -r -d '' file; do
-      relative_path="${file#$ARTIFACTS_DIRECTORY/}"
+      relative_path="${file#"$ARTIFACTS_DIRECTORY"/}"
       s3_key="${base_s3_path}/${relative_path}"
       
       aws s3api put-object \
@@ -132,7 +132,7 @@ find "$DEST/" -type f -print0 |
     aws s3api put-object --bucket "$AWS_BUCKET" --key "$artifact_path" --body "$artifact_path" "${sync_args[@]}"
   done
 
-cat <<-EOF >> $GITHUB_STEP_SUMMARY
+cat <<-EOF >> "$GITHUB_STEP_SUMMARY"
 This commit's ${IDS_PROJECT} artifacts can be fetched via:
 
 EOF
@@ -140,7 +140,7 @@ EOF
 find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
     while IFS= read -r -d '' architecture; do
     architecture=$(basename "$architecture");
-    cat <<-EOF >> $GITHUB_STEP_SUMMARY
+    cat <<-EOF >> "$GITHUB_STEP_SUMMARY"
 \`\`\`
 curl --output "$IDS_BINARY_PREFIX" --proto '=https' --tlsv1.2 -sSf -L 'https://install.determinate.systems/${IDS_PROJECT}/rev/$GIT_ISH/${architecture}'
 \`\`\`
@@ -149,7 +149,7 @@ EOF
 done
 
 
-cat <<-EOF >> $GITHUB_STEP_SUMMARY
+cat <<-EOF >> "$GITHUB_STEP_SUMMARY"
 Or generally from this ${TYPE}:
 
 EOF
@@ -157,7 +157,7 @@ EOF
 find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
     while IFS= read -r -d '' architecture; do
     architecture=$(basename "$architecture");
-    cat <<-EOF >> $GITHUB_STEP_SUMMARY
+    cat <<-EOF >> "$GITHUB_STEP_SUMMARY"
 \`\`\`
 curl --output "$IDS_BINARY_PREFIX" --proto '=https' --tlsv1.2 -sSf -L 'https://install.determinate.systems/${IDS_PROJECT}/${TYPE}/${TYPE_ID}/${architecture}'
 \`\`\`

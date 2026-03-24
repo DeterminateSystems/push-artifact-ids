@@ -1,3 +1,4 @@
+---
 name: 'Push artifacts to install.determinate.systems'
 description: 'An internal implementation detail for delivering software to users.'
 author: 'Determinate Systems, Inc.'
