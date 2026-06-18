@@ -74,6 +74,11 @@ find "$ARTIFACTS_DIRECTORY/" -type f -print0 |
   cp "$architecture" "$GIT_ISH/${filename}"
 done
 
+pushd "$DEST"
+sha256sum -- * > "${IDS_BINARY_PREFIX}-sha256sum"
+cp "${IDS_BINARY_PREFIX}-sha256sum" ../"$GIT_ISH"
+popd
+
 # If any artifact already exists in S3 and the hash is the same, we don't want to reupload
 check_reupload() {
   dest="$1"
